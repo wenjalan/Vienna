@@ -6,17 +6,23 @@ console.log('='.repeat(50))
 console.log('>'.repeat(21) + ' Vienna ' + '<'.repeat(21))
 console.log('='.repeat(50))
 
-const start = async () => {
+const start = async (args: string[]) => {
   const pathToModules = path.join(__dirname, 'modules')
   // console.log(`Loading modules from ${pathToModules}...`);
-  const modulePaths = await loadModules(pathToModules)
+  let modulePaths = await loadModules(pathToModules)
   console.log(`Found ${modulePaths.length} module(s)`)
+
+  // if args specifies --singleModule, only load module
+  if (args.length > 0 && args[0] === '--singleModule') {
+    const singleModuleName = args[1]
+    modulePaths = modulePaths.filter(modulePath => modulePath.includes(singleModuleName))
+    console.log(`\tFound ${modulePaths.length} module(s) matching '${args[1]}'`)
+  }
 
   console.log(`Initializing module(s)...`)
   const initModulesResult = await initModules(modulePaths)
   console.log(`Initialized ${initModulesResult.success.length}/${modulePaths.length} module(s) successfully`)
   const modules = initModulesResult.success
-
 
   console.log(`Starting module(s)...`)
   modules.forEach(module => module.default.start())
@@ -46,4 +52,5 @@ const initModules = async (modulePaths: string[]) => {
   return { success, failed }
 }
 
-start()
+const args = process.argv.slice(2)
+start(args)

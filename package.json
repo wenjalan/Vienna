@@ -3,16 +3,26 @@
   "version": "1.0.0",
   "description": "A multi-domain artificial intelligence service.",
   "main": "index.js",
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "scripts": {
-    "start": "npx ts-node main.ts",
+    "start": "tsc && node ./build/main.js",
+    "module": "tsc && node ./build/main.js --singleModule",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "wenjalan",
   "license": "ISC",
   "devDependencies": {
-    "ts-node": "^10.9.2",
+    "@types/marked-terminal": "^6.1.1",
     "typescript": "^5.4.5"
   },
   "dependencies": {
+    "@google-cloud/vertexai": "^1.1.0",
+    "@types/node": "^20.12.12",
+    "markdown-it": "^14.1.0",
+    "markdown-it-terminal": "^0.4.0",
+    "marked": "^12.0.2",
+    "marked-terminal": "^7.0.0"
   }
 }
