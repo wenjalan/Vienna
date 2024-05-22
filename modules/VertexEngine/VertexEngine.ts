@@ -31,10 +31,14 @@ const VertexEngine: Module = {
     chat = generativeModel.startChat({
       systemInstruction: SYSTEM_INSTRUCTION,
     })
+    
+    // send a warmup message to the model, otherwise it takes ~15 seconds for the first response
+    setTimeout(async () => {
+      await chat.sendMessage("SYSTEM: The user has initiated the chat.")
+    }, 0)
   },
 
   async start(): Promise<void> {
-    
   },
 
   async destroy(): Promise<void> {
@@ -42,8 +46,10 @@ const VertexEngine: Module = {
   }
 }
 
-export async function streamGenerateContent(input: string): Promise<StreamGenerateContentResult> {
-  const request: Part[] = [{ text: input }]
+export async function streamGenerateContent(input: string, markdown = true): Promise<StreamGenerateContentResult> {
+  const request: Part[] = []
+  if (!markdown) request.push({ text: 'SYSTEM: Respond to the following inquiry without using markdown.' })
+  request.push({ text: input })
 
   const result = await chat.sendMessageStream(request)
   return result
