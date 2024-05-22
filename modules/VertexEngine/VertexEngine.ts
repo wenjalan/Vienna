@@ -1,5 +1,5 @@
 import { Module } from "../../model/Module";
-import { ChatSession, GenerationConfig, GenerativeModel, Part, StreamGenerateContentResult, VertexAI } from "@google-cloud/vertexai";
+import { ChatSession, Content, GenerationConfig, GenerativeModel, Part, StreamGenerateContentResult, VertexAI } from "@google-cloud/vertexai";
 
 const PROJECT = 'vienna-423723'
 const LOCATION = 'us-west1'
@@ -10,7 +10,12 @@ const CONFIG: GenerationConfig = {
   candidateCount: 1,
 }
 
-const prompt = 'You are Vienna, a multi-domain AI assistant. Respond to the user without using markdown.'
+const SYSTEM_INSTRUCTION: Content = {
+  role: 'system',
+  parts: [
+    { text: 'You are Vienna, a multi-domain AI assistant. Respond to inquires from the user using concise language.' }
+  ]
+}
 
 let vertexAI: VertexAI
 let generativeModel: GenerativeModel
@@ -23,7 +28,9 @@ const VertexEngine: Module = {
       model: MODEL, 
       generationConfig: CONFIG,
     })
-    chat = generativeModel.startChat()
+    chat = generativeModel.startChat({
+      systemInstruction: SYSTEM_INSTRUCTION,
+    })
   },
 
   async start(): Promise<void> {
@@ -36,12 +43,8 @@ const VertexEngine: Module = {
 }
 
 export async function streamGenerateContent(input: string): Promise<StreamGenerateContentResult> {
-  const request: Part[] = [
-    {text: prompt},  
-    {text: input}
-  ]
+  const request: Part[] = [{ text: input }]
 
-  // const result = await generativeModel.generateContentStream(request)
   const result = await chat.sendMessageStream(request)
   return result
 }
