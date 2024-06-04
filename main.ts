@@ -19,6 +19,13 @@ const start = async (args: string[]) => {
     console.log(`\tFound ${modulePaths.length} module(s) matching '${args[1]}'`)
   }
 
+  // if args specifies --exclude, remove module(s)
+  if (args.length > 0 && args[0] === '--exclude') {
+    const excludedModules = args.slice(1)
+    modulePaths = modulePaths.filter(modulePath => !excludedModules.some(excludedModule => modulePath.includes(excludedModule)))
+    console.log(`\tExcluded ${excludedModules.length} module(s)`)
+  }
+
   console.log(`Initializing module(s)...`)
   const initModulesResult = await initModules(modulePaths)
   console.log(`Initialized ${initModulesResult.success.length}/${modulePaths.length} module(s) successfully`)

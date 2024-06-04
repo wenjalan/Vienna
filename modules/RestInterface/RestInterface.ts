@@ -1,6 +1,8 @@
 import { Server } from 'http';
 import { Module } from '../../model/Module';
+import VertexEngine from '../VertexEngine/VertexEngine';
 import express from 'express'
+import bodyParser from 'body-parser'
 
 let app: express.Application
 let server: Server
@@ -9,12 +11,12 @@ const PORT = 3000
 const RestInterface: Module = {
   async init(): Promise<void> {
     app = express()
+    app.use(bodyParser.json())
 
-    app.get('/', (req, res) => {
-      res.send('Vienna RESTInterface')
-    })
-
-    app.get('/vertex/query', (req, res) => getVertexQuery(req, res))
+    // API routes
+    const apiRouter = express.Router()
+    apiRouter.use('/vertex', await VertexEngine.router())
+    app.use('/api', apiRouter)
   },
 
   async start(): Promise<void> {
@@ -26,10 +28,6 @@ const RestInterface: Module = {
   async destroy(): Promise<void> {
     server.close()
   }
-}
-
-const getVertexQuery = async (req: express.Request, res: express.Response) => {
-  res.send('Vertex Query')
 }
 
 export default RestInterface

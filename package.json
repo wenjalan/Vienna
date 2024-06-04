@@ -10,7 +10,7 @@
     "start": "tsc && node ./build/main.js",
     "module": "tsc && node ./build/main.js --singleModule",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "api": "tsc && nodemon ./build/main.js --singleModule RestInterface"
+    "api": "tsc && node ./build/main.js --exclude ConsoleInterface"
   },
   "author": "wenjalan",
   "license": "ISC",
@@ -23,6 +23,7 @@
   "dependencies": {
     "@google-cloud/vertexai": "^1.1.0",
     "@types/node": "^20.12.12",
+    "body-parser": "^1.20.2",
     "express": "^4.19.2",
     "markdown-it": "^14.1.0",
     "markdown-it-terminal": "^0.4.0",
