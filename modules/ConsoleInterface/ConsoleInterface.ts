@@ -1,6 +1,7 @@
 import { Module } from '../../model/Module';
 import readline, { Interface } from 'readline';
 import { streamGenerateContent } from '../VertexEngine/VertexEngine';
+import { get } from '../InternetEngine/InternetEngine';
 
 let rl: Interface;
 const CLI_PROMPT = '> '
@@ -31,7 +32,21 @@ const ConsoleInterface: Module = {
     rl.on('line', async (input: string) => {
       if (input === 'exit') {
         rl.close()
-      } else {
+      } 
+      
+      else if (input.startsWith('get')) {
+        const split = input.split(' ')
+        if (split.length === 2) {
+          const url = split[1]
+          const res = await get(url)
+          const text = await res.text()
+          console.log(text)
+        } else {
+          console.log('Invalid get command. Usage: get <url>')
+        }
+      }
+      
+      else {
         await handleQuery(input)
         rl.prompt()
       }
